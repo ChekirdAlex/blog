@@ -1,0 +1,32 @@
+.header {
+  height: 80px;
+  background-color: white;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0  22px;
+  &__title {
+    margin-right: auto;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+  }
+  &__auth {
+    font-weight: 400;
+    font-size: 18px;
+    margin-right: 45px;
+  }
+  &__link {
+    width: 109px;
+    height: 51px;
+    border: 1px solid;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &--sign-up {
+      border-color: #52C41A;
+      color: #52C41A;
+    }
+  }
+}
