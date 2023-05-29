@@ -1,18 +1,16 @@
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
-import { ListPage } from "../../pages/ListPage";
-import { ArticlePage } from "../../pages/ArticlePage";
-import { Layout } from "../Layout";
+import { LayoutPage, ArticlePage, ListPage, ProfilePage, SignInPage, SignUpPage } from "../../pages";
 
 export const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Navigate to="/articles" />,
+      element: <Navigate to="/articles" replace />,
     },
     {
       path: "/",
-      element: <Layout />,
+      element: <LayoutPage />,
       children: [
         {
           path: "articles",
@@ -21,6 +19,18 @@ export const App = () => {
         {
           path: "articles/:slug",
           element: <ArticlePage />,
+        },
+        {
+          path: "sign-up",
+          element: <SignUpPage />,
+        },
+        {
+          path: "sign-in",
+          element: <SignInPage />,
+        },
+        {
+          path: "profile",
+          element: <ProfilePage />,
         },
       ],
     },

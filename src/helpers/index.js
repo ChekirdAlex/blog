@@ -1,3 +1,15 @@
-import { format } from "date-fns";
+import { getCookie, setCookie, deleteCookie } from "./cookieHelpers";
+import { changeTitle, formatDate, prepareErrorsText } from "./textFormatHelpers";
+import { getStorageUser, setStorageUser, deleteStorageUser } from "./storageHelpers";
 
-export const formatDate = (date) => format(new Date(date), "LLLL d, yyyy");
+export {
+  getCookie,
+  setCookie,
+  deleteCookie,
+  changeTitle,
+  formatDate,
+  prepareErrorsText,
+  getStorageUser,
+  setStorageUser,
+  deleteStorageUser,
+};

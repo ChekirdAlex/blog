@@ -1,17 +1,23 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Pagination } from "antd";
 
 import { useGetArticleListQuery } from "../redux/blog-api";
+import { setPage } from "../redux/listSlice";
 import { ItemsList } from "../components/ItemsList";
+import { changeTitle } from "../helpers";
 
 export const ListPage = () => {
+  changeTitle("Blog: List");
+
+  const dispatch = useDispatch();
+  const page = useSelector((state) => state.list.page);
   const articlesPerPage = 5;
-  const [page, setPage] = useState(1);
   const offsetItems = useMemo(() => articlesPerPage * page - articlesPerPage, [page]);
   const { data, isLoading } = useGetArticleListQuery(offsetItems);
 
   const onChange = (value) => {
-    setPage(value);
+    dispatch(setPage(value));
   };
 
   const style = {
