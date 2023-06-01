@@ -1,4 +1,4 @@
-import { SignUp } from "../components/forms";
+import { SignUp } from "../components/UserForms";
 import { changeTitle } from "../helpers";
 
 export const SignUpPage = () => {

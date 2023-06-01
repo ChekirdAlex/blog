@@ -5,7 +5,7 @@ import { Pagination } from "antd";
 import { useGetArticleListQuery } from "../redux/blog-api";
 import { setPage } from "../redux/listSlice";
 import { ItemsList } from "../components/ItemsList";
-import { changeTitle } from "../helpers";
+import { changeTitle, preparedItems } from "../helpers";
 
 export const ListPage = () => {
   changeTitle("Blog: List");
@@ -28,9 +28,11 @@ export const ListPage = () => {
 
   if (isLoading) return <h2>LOADING...</h2>;
 
+  const articles = preparedItems(data.articles);
+
   return (
     <>
-      <ItemsList articles={data.articles} />
+      <ItemsList articles={articles} />
       <Pagination
         style={style}
         total={data.articlesCount}

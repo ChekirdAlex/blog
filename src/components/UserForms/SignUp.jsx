@@ -1,43 +1,33 @@
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
 
-import { useUpdateUserMutation } from "../../redux/blog-api";
-import { prepareErrorsText, setCookie, setStorageUser } from "../../helpers";
-import { clearErrorMessages, setErrorMessages, setUserData } from "../../redux/userSlice";
+import { useSignUpUserMutation } from "../../redux/blog-api";
+import { submitUserData } from "../../helpers";
 
 import styles from "./form.module.scss";
 
-export const Profile = () => {
-  const [updateUser] = useUpdateUserMutation();
+export const SignUp = () => {
+  const [signUpUser] = useSignUpUserMutation();
   const errorMessages = useSelector((state) => state.user.errorMessages);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: { username: "", email: "", password: "", image: "" } });
-
-  const errorMessage = (name) => {
+    watch,
+  } = useForm({ defaultValues: { username: "", email: "", password: "", repeatPassword: "" } });
+  const onSubmit = async (user) => {
+    await submitUserData(user, signUpUser, dispatch, reset);
+    navigate("/articles", { replace: true });
+  };
+  const inputError = (name) => {
     if (errors[name]) {
       return <div className={styles.errorMessage}>{errors[name].message}</div>;
     }
-  };
-
-  const onSubmit = async (user) => {
-    const { data, error } = await updateUser({ user: { ...user } });
-    if (error) {
-      const errorsArray = prepareErrorsText(error.data.errors);
-      dispatch(setErrorMessages(errorsArray));
-      return;
-    }
-    const { token, username, email, image } = data.user;
-    dispatch(clearErrorMessages());
-    setStorageUser(username, email, image);
-    setCookie("Token", token, { SameSite: "strict" });
-    dispatch(setUserData({ username, email, image }));
-    reset();
   };
 
   const formError = (messages) =>
@@ -47,10 +37,13 @@ export const Profile = () => {
       </li>
     ));
 
+  const password = watch("password");
+  const agreement = watch("agreement");
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.header}>Edit Profile</h2>
-      {errorMessages.length > 0 ? <ol className={styles.errorList}>{formError(errorMessages)}</ol> : null}
+      <h2 className={styles.header}>Create new account</h2>
+      {errorMessages.length > 0 ? <ol>{formError(errorMessages)}</ol> : null}
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="username">
           <div className={styles.labelText}>Username</div>
@@ -70,7 +63,7 @@ export const Profile = () => {
               },
             })}
           />
-          {errorMessage("username")}
+          {inputError("username")}
         </label>
         <label htmlFor="email">
           <div className={styles.labelText}>Email address</div>
@@ -88,10 +81,10 @@ export const Profile = () => {
               },
             })}
           />
-          {errorMessage("email")}
+          {inputError("email")}
         </label>
         <label htmlFor="password">
-          <div className={styles.labelText}>New Password</div>
+          <div className={styles.labelText}>Password</div>
           <input
             className={cn(styles.input, { [styles.errorInput]: errors.password })}
             type="password"
@@ -104,29 +97,43 @@ export const Profile = () => {
               maxLength: { value: 40, message: "Your password must be no more than 40 characters." },
             })}
           />
-          {errorMessage("password")}
+          {inputError("password")}
         </label>
-        <label htmlFor="avatar">
-          <div className={styles.labelText}>Avatar image (url)</div>
+        <label htmlFor="repeatPassword">
+          <div className={styles.labelText}>Repeat Password</div>
           <input
-            className={cn(styles.input, { [styles.errorInput]: errors.image })}
-            type="text"
-            id="avatar"
+            className={cn(styles.input, { [styles.errorInput]: errors.repeatPassword })}
+            type="password"
+            id="repeatPassword"
             autoComplete="off"
-            placeholder="Avatar image"
-            {...register("image", {
-              pattern: {
-                value: /(^https?:\/\/)?[a-z0-9~_\-.]+\.[a-z]{2,9}(\/|:|\?[!-~]*)?$/i,
-                message: "Url must be in the correct form",
-              },
+            placeholder="Password"
+            {...register("repeatPassword", {
+              required: "This field is required",
+              validate: (value) => value === password || "Passwords must match",
             })}
           />
-          {errorMessage("image")}
+          {inputError("repeatPassword")}
+        </label>
+        <label htmlFor="checkbox" className={cn(styles.label, styles.agreement)}>
+          <input
+            type="checkbox"
+            id="checkbox"
+            className={styles.checkbox}
+            {...register("agreement", { required: true })}
+          />
+          <div className={styles.box} />
+          <div className={styles.labelText}>I agree to the processing of my personal information</div>
         </label>
         <label htmlFor="submit">
-          <input type="submit" id="submit" value="Save" className={styles.submit} />
+          <input type="submit" id="submit" value="Create" className={styles.submit} disabled={!agreement} />
         </label>
       </form>
+      <div className={styles.question}>
+        Already have an account?{" "}
+        <Link to="/sign-in" className={styles.redirect}>
+          Sign In.
+        </Link>
+      </div>
     </div>
   );
 };

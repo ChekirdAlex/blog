@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import cn from "classnames";
 
 import { useSignInUserMutation } from "../../redux/blog-api";
-import { clearErrorMessages, setErrorMessages, setUserData } from "../../redux/userSlice";
-import { prepareErrorsText, setCookie, setStorageUser } from "../../helpers";
+import { submitUserData } from "../../helpers";
 
 import styles from "./form.module.scss";
 
@@ -24,18 +23,7 @@ export const SignIn = () => {
   const redirectAddress = location.state?.from || "/articles";
 
   const onSubmit = async (user) => {
-    const { data, error } = await signInUser({ user: { ...user } });
-    if (error) {
-      const errorsArray = prepareErrorsText(error.data.errors);
-      dispatch(setErrorMessages(errorsArray));
-      return;
-    }
-    const { token, username, email, image } = data.user;
-    dispatch(clearErrorMessages());
-    setStorageUser(username, email, image);
-    setCookie("Token", token, { SameSite: "strict" });
-    dispatch(setUserData({ username, email, image }));
-    reset();
+    await submitUserData(user, signInUser, dispatch, reset);
     navigate(redirectAddress, { replace: true });
   };
 
@@ -56,7 +44,7 @@ export const SignIn = () => {
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <h2 className={styles.header}>Sign In</h2>
-        {errorMessages.length > 0 ? <ol className={styles.errorList}>{formError(errorMessages)}</ol> : null}
+        {errorMessages.length > 0 ? <ol>{formError(errorMessages)}</ol> : null}
         <label htmlFor="email">
           <div className={styles.labelText}>Email address</div>
           <input

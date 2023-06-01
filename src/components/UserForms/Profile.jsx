@@ -1,42 +1,27 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
 
-import { useSignUpUserMutation } from "../../redux/blog-api";
-import { prepareErrorsText, setCookie, setStorageUser } from "../../helpers";
-import { clearErrorMessages, setErrorMessages, setUserData } from "../../redux/userSlice";
+import { useUpdateUserMutation } from "../../redux/blog-api";
+import { submitUserData } from "../../helpers";
 
 import styles from "./form.module.scss";
 
-export const SignUp = () => {
-  const [signUpUser] = useSignUpUserMutation();
+export const Profile = () => {
+  const [updateUser] = useUpdateUserMutation();
   const errorMessages = useSelector((state) => state.user.errorMessages);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const {
     register,
     reset,
     handleSubmit,
     formState: { errors },
-    watch,
-  } = useForm({ defaultValues: { username: "", email: "", password: "", repeatPassword: "" } });
+  } = useForm({ defaultValues: { username: "", email: "", password: "", image: "" } });
+
   const onSubmit = async (user) => {
-    const { data, error } = await signUpUser({ user: { ...user } });
-    if (error) {
-      const errorsArray = prepareErrorsText(error.data.errors);
-      dispatch(setErrorMessages(errorsArray));
-      return;
-    }
-    const { token, username, email, image } = data.user;
-    dispatch(clearErrorMessages());
-    setStorageUser(username, email, image);
-    setCookie("Token", token, { SameSite: "strict" });
-    dispatch(setUserData({ username, email, image }));
-    reset();
-    navigate("/articles", { replace: true });
-    reset();
+    await submitUserData(user, updateUser, dispatch, reset);
   };
+
   const inputError = (name) => {
     if (errors[name]) {
       return <div className={styles.errorMessage}>{errors[name].message}</div>;
@@ -50,13 +35,10 @@ export const SignUp = () => {
       </li>
     ));
 
-  const password = watch("password");
-  const agreement = watch("agreement");
-
   return (
     <div className={styles.container}>
-      <h2 className={styles.header}>Create new account</h2>
-      {errorMessages.length > 0 ? <ol className={styles.errorList}>{formError(errorMessages)}</ol> : null}
+      <h2 className={styles.header}>Edit Profile</h2>
+      {errorMessages.length > 0 ? <ol>{formError(errorMessages)}</ol> : null}
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="username">
           <div className={styles.labelText}>Username</div>
@@ -97,7 +79,7 @@ export const SignUp = () => {
           {inputError("email")}
         </label>
         <label htmlFor="password">
-          <div className={styles.labelText}>Password</div>
+          <div className={styles.labelText}>New Password</div>
           <input
             className={cn(styles.input, { [styles.errorInput]: errors.password })}
             type="password"
@@ -112,41 +94,27 @@ export const SignUp = () => {
           />
           {inputError("password")}
         </label>
-        <label htmlFor="repeatPassword">
-          <div className={styles.labelText}>Repeat Password</div>
+        <label htmlFor="avatar">
+          <div className={styles.labelText}>Avatar image (url)</div>
           <input
-            className={cn(styles.input, { [styles.errorInput]: errors.repeatPassword })}
-            type="password"
-            id="repeatPassword"
+            className={cn(styles.input, { [styles.errorInput]: errors.image })}
+            type="text"
+            id="avatar"
             autoComplete="off"
-            placeholder="Password"
-            {...register("repeatPassword", {
-              required: "This field is required",
-              validate: (value) => value === password || "Passwords must match",
+            placeholder="Avatar image"
+            {...register("image", {
+              pattern: {
+                value: /(^https?:\/\/)?[a-z0-9~_\-.]+\.[a-z]{2,9}(\/|:|\?[!-~]*)?$/i,
+                message: "Url must be in the correct form",
+              },
             })}
           />
-          {inputError("repeatPassword")}
-        </label>
-        <label htmlFor="checkbox" className={cn(styles.label, styles.agreement)}>
-          <input
-            type="checkbox"
-            id="checkbox"
-            className={styles.checkbox}
-            {...register("agreement", { required: true })}
-          />
-          <div className={styles.box} />
-          <div className={styles.labelText}>I agree to the processing of my personal information</div>
+          {inputError("image")}
         </label>
         <label htmlFor="submit">
-          <input type="submit" id="submit" value="Create" className={styles.submit} disabled={!agreement} />
+          <input type="submit" id="submit" value="Save" className={styles.submit} />
         </label>
       </form>
-      <div className={styles.question}>
-        Already have an account?{" "}
-        <Link to="/sign-in" className={styles.redirect}>
-          Sign In.
-        </Link>
-      </div>
     </div>
   );
 };

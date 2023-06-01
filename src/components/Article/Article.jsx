@@ -12,14 +12,12 @@ export const Article = () => {
 
   if (isLoading) return <h2>Loading...</h2>;
 
-  // Todo http://localhost:3000/articles/ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo-1hp98m
-
-  const { body, ...articleProps } = data.article;
+  const { article } = data;
 
   return (
     <article className={styles.article}>
-      <ShortenItem article={articleProps} />
-      <ReactMarkdown className={styles["article__body"]}>{body}</ReactMarkdown>
+      <ShortenItem article={article} fullArticle />
+      <ReactMarkdown className={styles["article__body"]}>{article.body}</ReactMarkdown>
     </article>
   );
 };

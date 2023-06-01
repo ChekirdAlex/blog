@@ -1,4 +1,4 @@
-import { Profile } from "../components/forms";
+import { Profile } from "../components/UserForms";
 import { changeTitle } from "../helpers";
 import { useAuthCheck } from "../hooks";
 

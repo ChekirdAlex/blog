@@ -1,4 +1,4 @@
-import { SignIn } from "../components/forms";
+import { SignIn } from "../components/UserForms";
 import { changeTitle } from "../helpers";
 
 export const SignInPage = () => {

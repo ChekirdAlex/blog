@@ -38,7 +38,7 @@ export const Header = () => {
   );
   const loggedIn = (
     <>
-      <Link to="/" className={styles.createArticle}>
+      <Link to="/new-article" className={styles.createArticle}>
         Create article
       </Link>
       <Link to="/profile" className={styles.user}>

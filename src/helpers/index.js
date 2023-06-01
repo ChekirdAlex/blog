@@ -1,6 +1,7 @@
 import { getCookie, setCookie, deleteCookie } from "./cookieHelpers";
-import { changeTitle, formatDate, prepareErrorsText } from "./textFormatHelpers";
+import { changeTitle, formatDate, prepareErrorsText, preparedItems, shortenWord } from "./textFormatHelpers";
 import { getStorageUser, setStorageUser, deleteStorageUser } from "./storageHelpers";
+import { submitUserData } from "./submissionHelper";
 
 export {
   getCookie,
@@ -9,7 +10,10 @@ export {
   changeTitle,
   formatDate,
   prepareErrorsText,
+  preparedItems,
+  shortenWord,
   getStorageUser,
   setStorageUser,
   deleteStorageUser,
+  submitUserData,
 };
