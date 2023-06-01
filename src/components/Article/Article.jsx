@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import { Spin } from "antd";
 
 import { useGetArticleQuery } from "../../redux/blog-api";
 import { ShortenItem } from "../ShortenItem";
@@ -10,7 +11,12 @@ export const Article = () => {
   const { slug } = useParams();
   const { data, isLoading } = useGetArticleQuery(slug);
 
-  if (isLoading) return <h2>Loading...</h2>;
+  if (isLoading)
+    return (
+      <div className={styles.loader}>
+        <Spin size="large" />
+      </div>
+    );
 
   const { article } = data;
 

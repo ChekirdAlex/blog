@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Pagination } from "antd";
+import { Pagination, Spin } from "antd";
 
 import { useGetArticleListQuery } from "../redux/blog-api";
 import { setPage } from "../redux/listSlice";
 import { ItemsList } from "../components/ItemsList";
 import { changeTitle, preparedItems } from "../helpers";
+
+import styles from "./pages.module.scss";
 
 export const ListPage = () => {
   changeTitle("Blog: List");
@@ -26,7 +28,12 @@ export const ListPage = () => {
     justifyContent: "center",
   };
 
-  if (isLoading) return <h2>LOADING...</h2>;
+  if (isLoading)
+    return (
+      <div className={styles.loader}>
+        <Spin size="large" />
+      </div>
+    );
 
   const articles = preparedItems(data.articles);
 

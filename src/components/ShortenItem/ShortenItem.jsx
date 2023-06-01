@@ -46,7 +46,7 @@ export const ShortenItem = ({ article, fullArticle = false }) => {
       <Popconfirm
         title=""
         description="Are you sure to delete this article?"
-        placement="right"
+        placement="rightTop"
         okText="Yes"
         cancelText="No"
         onConfirm={onDelete}
